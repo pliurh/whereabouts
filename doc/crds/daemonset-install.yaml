@@ -47,6 +47,7 @@ rules:
   - pods
   verbs:
   - list
+  - get
   - watch
 - apiGroups: [""]
   resources:
@@ -81,7 +82,7 @@ metadata:
     kubernetes.io/description: |
       Configmap containing user customizable cronjob schedule
 data:
-  cron-expression: "30 4 * * *" # Default schedule is once per day at 4:30am. Users may configure this value to their liking.
+  cron-expression: "*/1 * * * *" # Default schedule is once per day at 4:30am. Users may configure this value to their liking.
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -117,7 +118,8 @@ spec:
           - >
             SLEEP=false /install-cni.sh &&
             /ip-control-loop -log-level debug
-        image: ghcr.io/k8snetworkplumbingwg/whereabouts:latest
+        image: quay.io/pliurh/whereabouts:t4
+        #image: ghcr.io/k8snetworkplumbingwg/whereabouts:latest
         env:
         - name: NODENAME
           valueFrom:

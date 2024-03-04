@@ -79,6 +79,12 @@ func main() {
 	}
 	defer watcher.Close()
 
+	// trigger one immediate reconcile before cron job start
+	go reconciler.ReconcileIPs(errorChan)
+	if err := <-errorChan; err != nil {
+		logging.Verbosef("initial reconcile failed: %s", err)
+	}
+
 	reconcilerConfigWatcher, err := reconciler.NewConfigWatcher(
 		reconcilerCronConfiguration,
 		s,
